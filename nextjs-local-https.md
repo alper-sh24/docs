@@ -1,12 +1,19 @@
 # Hosting Next.js Production Build Locally with HTTPS
 
-## Experimental HTTPS
-
-The flag works for local dev server, but cannot be used with `next start`
+Next.js has an experimental flag that allows you to server the dev server over HTTPS. However, it only works for the dev server. You cannot use it with `next start`. So, we need our own method of serving the local _production_ server over HTTPS to the local network and make it _secure_.
 
 ## Certificates
 
-You need self-signed certificates
+If you ever needed to serve something over HTTPS yourself, you inadvertantly learn about self-signed certificates. We will also utilize self-signed certificates for this.
+However, if you ever used one, you also know that having a certificate and serving an application over HTTPS does not automatically make it _globally secure_.
+The browsers only trust publicly _recognized_ certificates as safe HTTPS connections. If you use a self-signed certificate, every browser will show big red warning messages and make you jump through hoops before you can access your application, even though it is server over HTTPS.
+
+Since my use case is for a local application that will be accessed only by the local computers, it was only natural to _host_ the application locally as well. However, if you host locally, you cannot utilize the publicly recognized certificates that cloud providers automatically assign to your page. You _have to_ create your own.
+
+And since browser do not inherently trust any self-signed certificate, it gets annoying really fast to jump through the warning hoops.
+Good thing is, there is a workaround for this. You can make it so that _all_ machines, in your network _recognize_ that the self-signed certificate is trustworthy. After that, the browsers no longer use big red texts, and start showing the application like any other public HTTPS web page.
+
+### CA Certificate
 
 You need a CA certificate which acts as the main trusted source for machines
 
