@@ -2,6 +2,8 @@
 
 Next.js has an experimental flag that allows you to server the dev server over HTTPS. However, it only works for the dev server. You cannot use it with `next start`. So, we need our own method of serving the local _production_ server over HTTPS to the local network and make it _secure_.
 
+Note that if you only use `--experimental-https` flag for your dev server, Next.js will create its own certificates to serve your dev server. So, after following the steps below, make sure to also use your own self-signed certificates for the dev server as well. For example: `next dev --turbo -p 3001 --experimental-https --experimental-https-key /etc/ssl/custom/server.key --experimental-https-cert /etc/ssl/custom/server.crt`. If you do not use your own certificate, you will continue to get insecure context warnings for the dev server because Next.js will be using an unrecognized certificate.
+
 ## Certificates
 
 If you ever needed to serve something over HTTPS yourself, you inadvertantly learn about self-signed certificates. We will also utilize self-signed certificates for this.
@@ -157,5 +159,7 @@ example usage in my file: **/etc/apache2/sites-available/default-ssl.conf**
         </Directory>
 </VirtualHost>
 ```
+
+You can see that I am proxying the production server I started using `next start`. Then, with the Apache server I am able to connect to it over HTTPS.
 
 If your Apache server is already running, make sure to restart it.
