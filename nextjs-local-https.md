@@ -163,3 +163,46 @@ example usage in my file: **/etc/apache2/sites-available/default-ssl.conf**
 You can see that I am proxying the production server I started using `next start`. Then, with the Apache server I am able to connect to it over HTTPS.
 
 If your Apache server is already running, make sure to restart it.
+
+## Troubleshooting
+
+### Next.js EACCES: permission denied
+
+After you created your own certificate and tried to start the dev server with those certificates, you may have an error like so:
+
+```
+ return binding.open(
+                 ^
+Error: EACCES: permission denied, open '/etc/ssl/custom/server.key'
+    at Object.openSync (node:fs:560:18)
+    at Object.readFileSync (node:fs:444:35)
+    at startServer (/path/to/project/node_modules/next/dist/server/lib/start-server.js:247:26)
+    at /path/to/project/node_modules/next/dist/server/lib/start-server.js:431:52
+    at Span.traceAsyncFn (/path/to/project/node_modules/next/dist/trace/trace.js:157:26)
+    at process.<anonymous> (/path/to/project/node_modules/next/dist/server/lib/start-server.js:431:35)
+    at process.emit (node:events:508:28)
+    at emit (node:internal/child_process:949:14)
+    at process.processTicksAndRejections (node:internal/process/task_queues:91:21) {
+  errno: -13,
+  code: 'EACCES',
+  syscall: 'open',
+  path: '/etc/ssl/custom/server.key'
+```
+
+It's probably because the user running the dev server does not have _read_ permissions for the server key.
+
+If you check with
+
+```bash
+ls -l /etc/ssl/custom/server.key
+```
+
+and see something like `-rw------- 1 root root 1675 /etc/ssl/custom/server.key`, it means only **root** can read and write this file.
+
+Now, this is an area of caution, and I advise that you perform your own research on best way to approach this. I personally enabled read access to _all_ users of the machine:
+
+```bash
+sudo chmod 644 /etc/ssl/custom/server.key
+```
+
+Use it with caution! This was the easiest solution in my use case and with only 2 people working with computers in a small company and having it all local, I was not much worried about the read permissions. So, use it at your own risk or seek an alternative solution.
