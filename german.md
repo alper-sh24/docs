@@ -23,3 +23,6 @@ zeigt
 Ersetze
 ebenfalls
 statt
+schnittstelle
+angestellt
+​beschäftigt
